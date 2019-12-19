@@ -522,7 +522,7 @@ withSizes :: (Int -> a -> b) -> Trie a -> (Trie b, Int)
 withSizes map = f
   where
     f Empty = (Empty, 0)
-    f (Arc k v trie) = Arc k (v <&> map (n + 1)) subTrie
+    f (Arc k v trie) = (Arc k (v <&> map (n + 1)) subTrie, n)
       where
         (subTrie, n) = f trie
     f (Branch p m l r) = (Branch p m l' r', m + n)
