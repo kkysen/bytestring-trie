@@ -69,6 +69,8 @@ import qualified Data.ByteString as S
 import Data.Trie.ByteStringInternal
 import Data.Trie.BitTwiddle
 
+import Data.Functor ((<&>))
+
 import Data.Binary
 #if MIN_VERSION_base(4,9,0)
 import Data.Semigroup      (Semigroup(..))
@@ -517,7 +519,7 @@ size' (Arc _ Nothing t)  f n = size' t f n
 size' (Arc _ (Just _) t) f n = size' t f $! n + 1
 
 withSizes :: (Int -> a -> b) -> Trie a -> (Trie b, Int)
-withSizes = f map
+withSizes map = f
   where
     f Empty = (Empty, 0)
     f (Arc k v trie) = Arc k (v <&> map (n + 1)) subTrie
