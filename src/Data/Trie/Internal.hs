@@ -525,7 +525,7 @@ withSizes map = f
     f (Arc k v trie) = (Arc k (v <&> map (n + 1)) subTrie, n)
       where
         (subTrie, n) = f trie
-    f (Branch p m l r) = (Branch p m l' r', m + n)
+    f (Branch p mask l r) = (Branch p mask l' r', m + n)
       where
         (l', m) = f l
         (r', n) = f r
