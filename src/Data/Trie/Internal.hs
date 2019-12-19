@@ -32,6 +32,9 @@ module Data.Trie.Internal
 
     -- * Basic functions
     , empty, null, singleton, size
+    
+    -- * Store size of sub-tries
+    , withSizes, ofSizes
 
     -- * Conversion and folding functions
     , foldrWithKey, toListBy
@@ -513,6 +516,20 @@ size' (Branch _ _ l r)   f n = size' l (size' r f) n
 size' (Arc _ Nothing t)  f n = size' t f n
 size' (Arc _ (Just _) t) f n = size' t f $! n + 1
 
+withSizes :: (Int -> a -> b) -> Trie a -> (Trie b, Int)
+withSizes = f map
+  where
+    f Empty = (Empty, 0)
+    f (Arc k v trie) = Arc k (v <&> map (n + 1)) subTrie
+      where
+        (subTrie, n) = f trie
+    f (Branch p m l r) = (Branch p m l' r', m + n)
+      where
+        (l', m) = f l
+        (r', n) = f r
+
+ofSizes :: Trie a -> (Trie Int, Int)
+ofSizes = withSizes (\n _ -> n)
 
 {-----------------------------------------------------------
 -- Conversion functions
